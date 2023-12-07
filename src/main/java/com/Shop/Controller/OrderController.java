@@ -168,7 +168,7 @@ public class OrderController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+			return ResponseEntity.status(HttpStatus.OK)
 					.body(new ResponseObject("failed", "Không tìm thấy đơn hàng để xóa", null));
 		}
 
@@ -191,7 +191,7 @@ public class OrderController {
 //				return ResponseEntity.status(HttpStatus.OK)
 //						.body(new ResponseObject("ok", "Danh sách sản phẩm theo trang", productPage));
 			} else {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				return ResponseEntity.status(HttpStatus.OK)
 						.body(new ResponseObject("failed", "Không có sản phẩm", null));
 			}
 		} catch (Exception e) {

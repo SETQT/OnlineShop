@@ -250,7 +250,7 @@ public class ProductController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<ResponseObject> deleteProduct(@PathVariable Long id) {
 		try {
-			productService.delete(id);
+			productService.deleteProduct(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("failed", "lỗi", null));

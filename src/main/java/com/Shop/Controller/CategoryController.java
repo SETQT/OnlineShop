@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.Shop.DTO.CateDTO;
 import com.Shop.DTO.ResponseObject;
 import com.Shop.Model.Category;
 import com.Shop.Service.CategotyService.CategoryService;
+import com.Shop.Service.ProductService.ProductService;
 
 @RestController
 @RequestMapping("/cate")
@@ -24,12 +26,14 @@ public class CategoryController {
 
 	@Autowired
 	CategoryService cateService;
+	@Autowired
+	ProductService productService;
 
 	@GetMapping("/getAll")
 	public ResponseEntity<ResponseObject> getAllProducts() {
-		List<Category> cate = null;
+		List<CateDTO> cate = null;
 		try {
-			cate = cateService.findAll();
+			cate = productService.findCateInfo();
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Danh sách sản phẩm", cate));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -72,7 +76,7 @@ public class CategoryController {
 	}
 
 	// Sửa thông tin một Category
-	@PutMapping("/update/?categoryId?name")
+	@PutMapping("/update")
 	public ResponseEntity<ResponseObject> updateCategory(@RequestParam Long categoryId, @RequestParam String name) {
 		try {
 			Optional<Category> existingCategory = cateService.findById(categoryId);
@@ -83,7 +87,7 @@ public class CategoryController {
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(new ResponseObject("ok", "Cập nhật sản phẩm thành công", savedCategory));
 			} else {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				return ResponseEntity.status(HttpStatus.OK)
 						.body(new ResponseObject("failed", "Không tìm thấy sản phẩm", null));
 			}
 		} catch (Exception e) {
@@ -97,7 +101,7 @@ public class CategoryController {
 	@PostMapping("/delete/{categoryId}")
 	public ResponseEntity<ResponseObject> deleteCategory(@PathVariable Long categoryId) {
 		try {
-			cateService.delete(categoryId);
+			cateService.deleteCategory(categoryId);
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Xóa sản phẩm thành công", null));
 		} catch (Exception e) {
 			e.printStackTrace();

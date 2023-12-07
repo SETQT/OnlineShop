@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.Shop.DTO.CateDTO;
+import com.Shop.Model.Category;
 import com.Shop.Model.Product;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -25,4 +27,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	@Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))")
 	List<Product> findByNameContainingIgnoreCase(@Param("name") String name);
 
+	@Query("SELECT NEW com.Shop.DTO.CateDTO(c.id, c.name,COALESCE(COUNT(p), 0)) "
+			+ "FROM Category c LEFT JOIN Product p ON c.id = p.category.id GROUP BY c.id")
+	List<CateDTO> getCategoriesWithCount();
+
+	List<Product> findByCategory(Category category);
 }
