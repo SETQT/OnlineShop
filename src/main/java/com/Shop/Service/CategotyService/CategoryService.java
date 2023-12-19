@@ -10,6 +10,7 @@ import com.Shop.Model.Product;
 import com.Shop.Repository.CategoryRepository;
 import com.Shop.Repository.ProductRepository;
 import com.Shop.Service.Generic.GenericService;
+import com.Shop.Service.ProductService.ProductService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -22,6 +23,8 @@ public class CategoryService extends GenericService<Category> implements ICatego
 
 	@Autowired
 	private ProductRepository productRepository;
+	@Autowired
+	private ProductService productService;
 
 	@Transactional
 	public void deleteCategory(Long categoryId) {
@@ -32,8 +35,8 @@ public class CategoryService extends GenericService<Category> implements ICatego
 		List<Product> productsInCategory = productRepository.findByCategory(category);
 
 		// Đặt null cho category của các sản phẩm thuộc Category
-		productsInCategory.forEach(product -> product.setCategory(null));
-		productRepository.saveAll(productsInCategory);
+		productsInCategory.forEach(product -> productService.deleteProduct(product.getId()));
+//		productRepository.saveAll(productsInCategory);
 
 		// Xóa Category
 		((CategoryRepository) genericRepository).delete(category);

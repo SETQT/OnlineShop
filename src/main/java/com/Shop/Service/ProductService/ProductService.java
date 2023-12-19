@@ -14,11 +14,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import com.Shop.DTO.CateDTO;
+import com.Shop.Model.Order;
 import com.Shop.Model.OrderItem;
 import com.Shop.Model.Product;
 import com.Shop.Repository.OrderItemRepository;
+import com.Shop.Repository.OrderRepository;
 import com.Shop.Repository.ProductRepository;
 import com.Shop.Service.Generic.GenericService;
+import com.Shop.Service.OrderService.OrderService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -33,6 +36,10 @@ public class ProductService extends GenericService<Product> implements IProductS
 
 	@Autowired
 	OrderItemRepository orderItemRepository;
+	@Autowired
+	OrderRepository orderRepository;
+	@Autowired
+	OrderService orderService;
 
 	public Map<String, Object> getByCategory(Long id, int off, int ind, String sortBy) {
 		// TODO Auto-generated method stub
@@ -82,8 +89,15 @@ public class ProductService extends GenericService<Product> implements IProductS
 		// Xóa sản phẩm khỏi các đơn hàng (OrderItem) có liên quan trước khi xóa sản
 		// phẩm
 		List<OrderItem> orderItems = orderItemRepository.findByProduct(product);
-		orderItems.forEach(orderItem -> orderItem.setProduct(null));
-		orderItemRepository.saveAll(orderItems);
+		orderItems.forEach(orderItem -> {
+			Order order = orderRepository.findByOrderItemsId(orderItem.getId()).get(0);
+			List<OrderItem> listItem = order.getOrderItems();
+			listItem.remove(orderItem);
+			order.setOrderItems(listItem);
+			orderRepository.save(order);
+			orderItemRepository.delete(orderItem);
+		});
+//		orderItemRepository.saveAll(orderItems);
 
 		// Xóa sản phẩm
 		((ProductRepository) genericRepository).delete(product);

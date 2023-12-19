@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -171,8 +172,8 @@ public class DataServiceImpl implements DataService {
 
 		importCategories(workbook);
 		importProducts(workbook);
-		importOrders(workbook);
 		importClients(workbook);
+		importOrders(workbook);
 		importOrderItems(workbook);
 
 		workbook.close();
@@ -277,6 +278,8 @@ public class DataServiceImpl implements DataService {
 			value = currentRow.getCell(1).getNumericCellValue();
 			Order order = orderRepository.getById(value.longValue());
 			List<OrderItem> listOrder = order.getOrderItems();
+			if (listOrder == null)
+				listOrder = new ArrayList<>();
 			listOrder.add(orderItem);
 			order.setOrderItems(listOrder);
 			orderRepository.save(order);
