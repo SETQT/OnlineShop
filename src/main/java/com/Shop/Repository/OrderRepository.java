@@ -49,8 +49,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 	// Tính tổng lợi nhuận theo tháng
 	@Query(value = "SELECT SUM(oi.profit*oi.quantity) FROM \"user_order\" o "
-			+ "JOIN \"user_order_order_items\" rl ON o.id = rl.order_id " + "JOIN product p ON oi.product_id = p.id "
-			+ "JOIN order_item oi ON rl.order_items_id = oi.id " + "WHERE EXTRACT(YEAR FROM o.order_date) = :year "
+			+ "JOIN \"user_order_order_items\" rl ON o.id = rl.order_id "
+			+ "JOIN order_item oi ON rl.order_items_id = oi.id " + "JOIN product p ON oi.product_id = p.id "
+			+ "WHERE EXTRACT(YEAR FROM o.order_date) = :year "
 			+ "AND EXTRACT(MONTH FROM o.order_date) = :month", nativeQuery = true)
 	Double getTotalProfitByMonth(@Param("year") int year, @Param("month") int month);
 
@@ -63,8 +64,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 	// Tính tổng lợi nhuận theo tuần
 	@Query(value = "SELECT SUM(oi.profit*oi.quantity) FROM \"user_order\" o "
-			+ "JOIN \"user_order_order_items\" rl ON o.id = rl.order_id " + "JOIN product p ON oi.product_id = p.id "
-			+ "JOIN order_item oi ON rl.order_items_id = oi.id " + "WHERE EXTRACT(YEAR FROM o.order_date) = :year  "
+			+ "JOIN \"user_order_order_items\" rl ON o.id = rl.order_id "
+			+ "JOIN order_item oi ON rl.order_items_id = oi.id " + "JOIN product p ON oi.product_id = p.id "
+			+ "WHERE EXTRACT(YEAR FROM o.order_date) = :year  "
 			+ "AND EXTRACT(WEEK FROM o.order_date) = :week", nativeQuery = true)
 	Double getTotalProfitByWeek(@Param("year") int year, @Param("week") int week);
 
@@ -73,7 +75,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 			+ "FROM user_order o " + "JOIN \"user_order_order_items\" rl ON o.id = rl.order_id "
 			+ "JOIN order_item oi ON rl.order_items_id = oi.id " + "JOIN product p ON oi.product_id = p.id "
 			+ "WHERE EXTRACT(YEAR FROM o.order_date) = :year " + "AND EXTRACT(MONTH FROM o.order_date) = :month "
-			+ "GROUP BY p.name, p.amount", nativeQuery = true)
+			+ "GROUP BY p.name, p.number_init", nativeQuery = true)
 	List<Object[]> countSoldProductsByProductAndMonth(@Param("year") int year, @Param("month") int month);
 
 	@Query(value = "SELECT  SUM(oi.quantity) as soldQuantity  " + "FROM user_order o "
@@ -85,20 +87,21 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	@Query(value = "SELECT p.name as productName, SUM(oi.quantity) as soldQuantity , (p.number_init - SUM(oi.quantity)) as remainingQuantity "
 			+ "FROM user_order o " + "JOIN \"user_order_order_items\" rl ON o.id = rl.order_id "
 			+ "JOIN order_item oi ON rl.order_items_id = oi.id " + "JOIN product p ON oi.product_id = p.id "
-			+ "WHERE EXTRACT(YEAR FROM o.order_date) = :year " + "GROUP BY p.name, p.amount", nativeQuery = true)
+			+ "WHERE EXTRACT(YEAR FROM o.order_date) = :year " + "GROUP BY p.name, p.number_init", nativeQuery = true)
 	List<Object[]> countSoldProductsByProductAndYear(@Param("year") int year);
 
 	@Query(value = "SELECT p.name as productName, SUM(oi.quantity) as soldQuantity , (p.number_init - SUM(oi.quantity)) as remainingQuantity "
 			+ "FROM user_order o " + "JOIN \"user_order_order_items\" rl ON o.id = rl.order_id "
 			+ "JOIN order_item oi ON rl.order_items_id = oi.id " + "JOIN product p ON oi.product_id = p.id "
 			+ "WHERE EXTRACT(YEAR FROM o.order_date) = :year " + "AND EXTRACT(WEEK FROM o.order_date) = :week "
-			+ "GROUP BY p.name, p.amount", nativeQuery = true)
+			+ "GROUP BY p.name, p.number_init", nativeQuery = true)
 	List<Object[]> countSoldProductsByProductAndYearWeek(@Param("year") int year, @Param("week") int week);
 
 	@Query(value = "SELECT p.name as productName, SUM(oi.quantity) as soldQuantity , (p.number_init - SUM(oi.quantity)) as remainingQuantity "
 			+ "FROM user_order o " + "JOIN \"user_order_order_items\" rl ON o.id = rl.order_id "
 			+ "JOIN order_item oi ON rl.order_items_id = oi.id " + "JOIN product p ON oi.product_id = p.id "
-			+ "WHERE o.order_date BETWEEN :dateStart AND :dateEnd" + " GROUP BY p.name, p.amount", nativeQuery = true)
+			+ "WHERE o.order_date BETWEEN :dateStart AND :dateEnd"
+			+ " GROUP BY p.name, p.number_init", nativeQuery = true)
 	List<Object[]> countSoldProductsByProduct(@Param("dateStart") LocalDateTime dateStart,
 			@Param("dateEnd") LocalDateTime dateEnd);
 
