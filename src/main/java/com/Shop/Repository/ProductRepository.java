@@ -18,7 +18,19 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 //	@Query(value = "SELECT e FROM Product e WHERE e.Category.id =?1 offset ?2 limit ?3", nativeQuery = true)
 //	List<Product> findByCategoryId(Long id);
 	Page<Product> findByCategoryId(Long id, Pageable pageable);
+
 	// Các phương thức khác liên quan đến ProductService
+	// Lấy 5 sản phẩm có (numberInit - amount) lớn nhất
+	@Query(value = "SELECT p FROM Product p ORDER BY (p.numberInit - p.amount) DESC")
+	List<Product> findTop5ProductsByNumberInitMinusAmount();
+
+	// Lấy 5 sản phẩm có amount nhỏ nhất
+	@Query(value = "SELECT p FROM Product p ORDER BY p.amount ASC")
+	List<Product> findTop5ProductsByAmount();
+
+	// Tính tổng số sản phẩm
+	@Query("SELECT COUNT(p) FROM Product p")
+	Long getTotalProductCount();
 
 //	@Query("SELECT p FROM Product p")
 	@Query(value = "SELECT e FROM Product e offset ?1 limit ?2", nativeQuery = true)

@@ -25,6 +25,23 @@ public class StatisticsController {
 
 	@Autowired
 	private OrderRepository orderRepository;
+	@Autowired
+	private com.Shop.Service.ProductService.ProductService ProductService;
+
+	@GetMapping("/dashboard")
+	public ResponseEntity<Object> dashboard() {
+		try {
+			Object result = ProductService.getProductInformation();
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new ResponseObject("success", "Thông số thống kê, ", result));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new ResponseObject("failed", "lấy sản phẩm thất bại", null));
+		}
+
+	}
 
 	@GetMapping("/getStatistic")
 	public ResponseEntity<Object> getStatistic(@RequestParam("type") String type,

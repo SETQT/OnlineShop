@@ -1,5 +1,6 @@
 package com.Shop.Model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,6 +28,8 @@ public class Product {
 	private Long amount;
 	private double discount;
 	private double profit;
+	@Column(name = "number_init")
+	private Long numberInit;
 
 	public Product() {
 	}
@@ -103,5 +106,13 @@ public class Product {
 
 	public void setProfit(double profit) {
 		this.profit = profit;
+	}
+
+	public Long getNumberInit() {
+		return numberInit;
+	}
+
+	public void setNumberInit(Long numberInit) {
+		this.numberInit = numberInit;
 	}
 }

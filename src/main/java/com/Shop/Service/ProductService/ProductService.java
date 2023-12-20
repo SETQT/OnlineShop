@@ -1,5 +1,6 @@
 package com.Shop.Service.ProductService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,13 +42,36 @@ public class ProductService extends GenericService<Product> implements IProductS
 	@Autowired
 	OrderService orderService;
 
+	public Map<String, Object> getProductInformation() {
+		Map<String, Object> productInformation = new HashMap<>();
+
+		// Lấy tổng số sản phẩm
+		Long totalProductCount = ((ProductRepository) genericRepository).getTotalProductCount();
+		productInformation.put("totalProductCount", totalProductCount);
+
+		// Lấy 5 sản phẩm có amount nhỏ nhất
+		List<Product> top5ProductsByAmount = ((ProductRepository) genericRepository).findTop5ProductsByAmount();
+		productInformation.put("top5ProductsRemaining", top5ProductsByAmount);
+
+		// Lấy 5 sản phẩm có (numberInit - amount) lớn nhất
+		List<Product> top5ProductsByNumberInitMinusAmount = ((ProductRepository) genericRepository)
+				.findTop5ProductsByNumberInitMinusAmount();
+		productInformation.put("top5ProductsSold", top5ProductsByNumberInitMinusAmount);
+		LocalDateTime startDate = LocalDateTime.now();
+		Long number = orderRepository.countALLSoldProductsByProductAndMonth(startDate.getYear(),
+				startDate.getMonthValue());
+
+		productInformation.put("productsSold", number);
+		return productInformation;
+	}
+
 	public Map<String, Object> getByCategory(Long id, int off, int ind, String sortBy) {
 		// TODO Auto-generated method stub
 		Pageable paging = PageRequest.of(off, ind, Sort.by(sortBy));
 		Page<Product> pagedResult = ((ProductRepository) genericRepository).findByCategoryId(id, paging);
 
 		Map<String, Object> response = new HashMap<>();
-		response.put("orders", pagedResult.getContent());
+
 		response.put("currentPage", pagedResult.getNumber() + 1);
 		response.put("totalItems", pagedResult.getTotalElements());
 		response.put("totalPages", pagedResult.getTotalPages());
@@ -61,16 +85,23 @@ public class ProductService extends GenericService<Product> implements IProductS
 
 	}
 
-	public List<Product> findProductsByPage(int off, int ind, String sortBy) {
+	public Map<String, Object> findProductsByPage(int off, int ind, String sortBy) {
 		// TODO Auto-generated method stub
 		Pageable paging = PageRequest.of(off, ind, Sort.by(sortBy));
 		Page<Product> pagedResult = ((ProductRepository) genericRepository).findAll(paging);
 
+		Map<String, Object> response = new HashMap<>();
+		response.put("currentPage", pagedResult.getNumber() + 1);
+		response.put("totalItems", pagedResult.getTotalElements());
+		response.put("totalPages", pagedResult.getTotalPages());
+
 		if (pagedResult.hasContent()) {
-			return pagedResult.getContent();
+			response.put("products", pagedResult.getContent());
 		} else {
-			return new ArrayList<Product>();
+			response.put("products", new ArrayList<>());
 		}
+
+		return response;
 
 	}
 

@@ -1,5 +1,6 @@
 package com.Shop.Service.OrderService;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.Shop.DTO.ClientDTO;
 import com.Shop.Model.Order;
 import com.Shop.Repository.OrderRepository;
 import com.Shop.Service.Generic.GenericService;
@@ -32,6 +34,23 @@ public class OrderService extends GenericService<Order> implements IOrderService
 		} else {
 			return new ArrayList<Order>();
 		}
+
+	}
+
+	public List<ClientDTO> getClientTotalAmountUsed() {
+		// TODO Auto-generated method stub
+		List<ClientDTO> res = new ArrayList<ClientDTO>();
+		DecimalFormat decimalFormat = new DecimalFormat("#");
+		res = ((OrderRepository) genericRepository).getClientTotalAmountUsed();
+		if (res.size() != 0) {
+			res.forEach(c -> {
+
+				c.setMoneyString(decimalFormat.format(c.getMoneyUsed()));
+
+			});
+		}
+
+		return res;
 
 	}
 

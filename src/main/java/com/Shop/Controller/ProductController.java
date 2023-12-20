@@ -85,6 +85,7 @@ public class ProductController {
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(new ResponseObject("failed", "Không có loại sản phẩm này", null));
 			newProduct.setCategory(cate.get());
+			newProduct.setNumberInit(productDTO.getAmount());
 			productService.save(newProduct);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -124,6 +125,7 @@ public class ProductController {
 		double parsedDiscount = Double.parseDouble(discount);
 		double parsedProfit = Double.parseDouble(profit);
 		Product newProduct = new Product(name, parsedPrice, parsedAmount, parsedDiscount, imageUrl, parsedProfit);
+		newProduct.setNumberInit(parsedAmount);
 		Optional<Category> cate = java.util.Optional.empty();
 		try {
 			cate = cateService.findById(Long.parseLong(category));
@@ -162,7 +164,7 @@ public class ProductController {
 
 		try {
 //			List<Product> productPage = productService.findAll(PageRequest.of(1, 2));
-			List<Product> productPage = productService.findProductsByPage(page - 1, size, sortBy);
+			Map<String, Object> productPage = productService.findProductsByPage(page - 1, size, sortBy);
 
 			if (!productPage.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.OK)
@@ -216,21 +218,6 @@ public class ProductController {
 	public ResponseEntity<Object> getProductsByCategoryId(@RequestParam Long id,
 			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10000") int size,
 			@RequestParam(defaultValue = "id") String sortBy) {
-//		try {
-//			List<Product> products = productService.getByCategory(id, page - 1, size, sortBy);
-//
-//			if (!products.isEmpty()) {
-//				return ResponseEntity.status(HttpStatus.OK)
-//						.body(new ResponseObject("ok", "Danh sách sản phẩm theo loại", products));
-//			} else {
-//				return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//						.body(new ResponseObject("failed", "Không có sản phẩm thuộc loại này", null));
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//					.body(new ResponseObject("failed", "Lấy danh sách sản phẩm thất bại", null));
-//		}
 
 		Map<String, Object> productPage = productService.getByCategory(id, page - 1, size, sortBy);
 		Map<String, Object> response = new HashMap<>();
@@ -239,8 +226,7 @@ public class ProductController {
 			response.put("data", productPage); // yourData là dữ liệu của bạn
 
 			return new ResponseEntity<>(response, HttpStatus.OK);
-//			return ResponseEntity.status(HttpStatus.OK)
-//					.body(new ResponseObject("ok", "Danh sách sản phẩm theo trang", productPage));
+
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(new ResponseObject("failed", "Không có sản phẩm", null));
