@@ -21,4 +21,14 @@ public class ClientService extends GenericService<Client> implements IClientSV {
 		return res;
 
 	}
+
+	public Client createClient(Client client) {
+
+		return ((ClientRepository) genericRepository).save(client);
+	}
+//	public void delete(String id) {
+//
+//		Client c= ((ClientRepository) genericRepository).getById(Long.parseLong(id));
+//		
+//	}
 }

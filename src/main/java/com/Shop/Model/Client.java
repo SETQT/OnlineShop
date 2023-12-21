@@ -1,9 +1,13 @@
 package com.Shop.Model;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.experimental.SuperBuilder;
 
@@ -18,6 +22,9 @@ public class Client {
 	private String address;
 	private String phoneNumber;
 	private String email;
+
+	@OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Order> orders;
 
 	public Client() {
 	}
