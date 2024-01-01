@@ -1,5 +1,7 @@
 package com.Shop.Service.Client;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -23,8 +25,19 @@ public class ClientService extends GenericService<Client> implements IClientSV {
 	}
 
 	public Client createClient(Client client) {
-
-		return ((ClientRepository) genericRepository).save(client);
+		Optional<Client> c = ((ClientRepository) genericRepository).findById(client.getId());
+		if (c.isEmpty())
+			return ((ClientRepository) genericRepository).save(client);
+		else {
+			Client res = c.get();
+			res.setAddress(client.getAddress());
+			res.setEmail(client.getEmail());
+			res.setName(client.getName());
+			res.setId(client.getId());
+			res.setPhoneNumber(client.getPhoneNumber());
+			((ClientRepository) genericRepository).save(res);
+			return res;
+		}
 	}
 //	public void delete(String id) {
 //
