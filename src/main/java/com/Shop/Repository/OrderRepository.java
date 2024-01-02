@@ -79,8 +79,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	List<Object[]> countSoldProductsByProductAndMonth(@Param("year") int year, @Param("month") int month);
 
 	@Query(value = "SELECT  SUM(oi.quantity) as soldQuantity  " + "FROM user_order o "
-			+ "JOIN \"user_order_order_items\" rl ON o.id = rl.order_id " + "JOIN product p ON oi.product_id = p.id "
-			+ "JOIN order_item oi ON rl.order_items_id = oi.id " + "WHERE EXTRACT(YEAR FROM o.order_date) = :year "
+			+ "JOIN \"user_order_order_items\" rl ON o.id = rl.order_id "
+			+ "JOIN order_item oi ON rl.order_items_id = oi.id " + "JOIN product p ON oi.product_id = p.id "
+			+ "WHERE EXTRACT(YEAR FROM o.order_date) = :year "
 			+ "AND EXTRACT(MONTH FROM o.order_date) = :month ", nativeQuery = true)
 	Long countALLSoldProductsByProductAndMonth(@Param("year") int year, @Param("month") int month);
 
