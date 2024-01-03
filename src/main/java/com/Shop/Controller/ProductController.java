@@ -35,7 +35,9 @@ import com.Shop.Service.ProductService.ProductService;
 public class ProductController {
 	@Autowired
 	private FirebaseImageService firebaseImageService;
+	@Autowired
 	private final ProductService productService;
+	@Autowired
 	private final CategoryService cateService;
 
 	public ProductController(ProductService productService, CategoryService cateService) {
